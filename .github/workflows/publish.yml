@@ -20,7 +20,7 @@ jobs:
 
       - name: Build directory
         run: |
-          python build.py --url "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+          python "scripts/build.py" --url "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
