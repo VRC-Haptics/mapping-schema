@@ -1,0 +1,15 @@
+on:
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Dependencies
+        run: |
+          pip install -r "scripts/requirements.txt"
+
+      - name: Build directory
+        run: |
+          python full_build.py --url "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
