@@ -48,7 +48,7 @@
       "description": "Nodes that represent data input FROM the game",
       "type": "array",
       "items": {
-        "$ref": "#/schema/${{VERSION}}/in_node.schema.json",
+        "$ref": "${{BASE_URL}}/schema/${{VERSION}}/in_node.schema.json",
         "uniqueItems": true,
         "minItems": 0
       }
@@ -57,7 +57,7 @@
       "description": "Nodes that will be associated with an output device. Inidices determine order transmitted to devices, changing the order effectively ",
       "type": "array",
       "items": {
-        "$ref": "#/schema/${{VERSION}}/out_node.schema.json",
+        "$ref": "${{BASE_URL}}/schema/${{VERSION}}/out_node.schema.json",
         "uniqueItems": true,
         "minItems": 0
       }

@@ -70,7 +70,7 @@
       "description": "What tags this node should interact with. Without tags, an input node WILL NOT output feedback",
       "type": "array",
       "items": {
-        "$ref": "#/schema/${{VERSION}}/node_group.schema.json"
+        "$ref": "${{BASE_URL}}/schema/${{VERSION}}/node_group.schema.json"
       },
       "minItems": 1
     },
