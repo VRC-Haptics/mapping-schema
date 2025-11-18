@@ -63,5 +63,5 @@
       }
     }
   },
-  "required": ["identification", "input_nodes"]
+  "required": ["identification", "input_nodes", "output_nodes"]
 }
