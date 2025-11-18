@@ -76,8 +76,8 @@ if __name__ == "__main__":
     print("Cleaning Old Build") 
     clean()
 
-    print("Starting Build")
     url = args.url
+    print(f"Starting Build with url: {url}")
     build(url)
 
     print("Build Completed")
