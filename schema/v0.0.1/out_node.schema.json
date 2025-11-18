@@ -35,10 +35,6 @@
     "name": {
       "description": "A short recognizable name for this node, Enforced to 10 characters maximum using utf-8 encoding. Very optional.",
       "type": "string"
-    },
-    "interpolation_layer": {
-      "description": "Internally, the seperate layers are calculated, then the non-zero results are averaged. `Limited` locks this input node to the nearest output and doesn't influence any others. `Default` exponentially weighs distance from the output. `Linear` Linearly scales outputs according to `size:radius`/node_distance. `Global` influences all nodes regardless of distance.",
-      "enum": ["Limited", "Default", "Linear", "Global"]
     }
   }
 }
