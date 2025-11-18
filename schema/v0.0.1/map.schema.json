@@ -6,7 +6,7 @@
   "type": "object",
   "properties": {
     "identification": {
-      "description": "A group of defining features that are used to load configurations when an avatar is detected",
+      "description": "A group of defining features that are used to load configurations when an avatar is detected. All maps with the same name are expected to be compatible, with the latest as a default.",
       "type": "object",
       "properties": {
         "author_name": {
@@ -18,8 +18,8 @@
           "type": "string"
         },
         "map_version": {
-          "description": "Semver version flag for this haptic map. `v{major}.{minor}.{patch}`",
-          "type": "string"
+          "description": "Increments with each version change.",
+          "type": "integer"
         },
         "author_id": {
           "description": "Author UUID assigned by the official distribution system. Work in Progress, currently does nothing",
