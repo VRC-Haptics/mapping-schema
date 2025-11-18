@@ -22,7 +22,7 @@ Migration files are a json format that describe what is needed to migrate from o
 ### Upgrade format.
 Here we have an already known format that we need to migrate into a new version.
 
-```json
+```jsonc
 {
     // whether the requested update is possible in a trivial, automatic way
     // Purely a convenience field.
