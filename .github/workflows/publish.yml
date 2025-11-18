@@ -2,9 +2,14 @@ name: Publish
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g., v1.0.0)'
+        required: true
+        type: string
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -22,6 +27,19 @@ jobs:
         run: |
           python "scripts/build.py" --url "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
 
+      - name: Create archive
+        run: |
+          cd build
+          zip -r ../schemas.zip .
+          cd ..
+
+      - name: Create Draft Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ inputs.tag }}
+          draft: true
+          files: schemas.zip
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -29,5 +47,3 @@ jobs:
       
       - name: Publish
         uses: actions/deploy-pages@v4
-
-      
