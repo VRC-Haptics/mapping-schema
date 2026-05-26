@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema-version": "${{VERSION}}",
+  "$id": "${{BASE_URL}}/schema/${{VERSION}}/node.schema.json",
+  "title": "input_node_definition",
+  "description": "Defines all the information an input haptic node can carry",
+  "type": "object",
+  "$defs": {
+    "Shape": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": { "const": "Sphere" },
+            "radius": { "type": "number" }
+          },
+          "required": ["type", "radius"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "A capsule type collider has it's location at the center of the shape.",
+          "properties": {
+            "type": { "const": "Capsule" },
+            "radius": { "type": "number" },
+            "length": { "type": "number" },
+            "rotation": {
+              "description": "Quaternion rotation from Y+ upwards, and Z+ Forwards.",
+              "type": "array",
+              "items": { "type": "number" },
+              "minItems": 4,
+              "maxItems": 4
+            }
+          },
+          "required": ["type", "radius", "length", "rotation"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": { "const": "Ray" },
+            "len": { "type": "number" },
+            "offset": {"type": "number"}
+          },
+          "required": ["type", "len", "offset"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "description": "It is required to use the Global `interpolation_layer` as this will result in a 0 output value.",
+          "properties": {
+            "type": { "const": "Point" }
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "properties": {
+    "name": {
+      "description": "A short recognizable name for this node. Very optional.",
+      "type": "string"
+    },
+    "location": {
+      "description": "Location of this node in the Manager's \"standard\" space",
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "number",
+          "description": "The X position, Unity Coordinate system."
+        },
+        {
+          "type": "number",
+          "description": "The Y position, Unity Coordinate system."
+        },
+        {
+          "type": "number",
+          "description": "The Z position, Unity Coordinate system."
+        }
+      ],
+      "items": false
+    },
+    "interactionTags": {
+      "description": "What tags this node should interact with. Without tags, an input node WILL NOT output feedback",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Head",
+          "UpperArmRight",
+          "UpperArmLeft",
+          "LowerArmRight",
+          "LowerArmLeft",
+          "TorsoRight",
+          "TorsoLeft",
+          "TorsoFront",
+          "TorsoBack",
+          "UpperLegRight",
+          "UpperLegLeft",
+          "LowerLegRight",
+          "LowerLegLeft",
+          "FootRight",
+          "FootLeft",
+          "All"
+        ]
+      },
+      "minItems": 1
+    },
+    "inputs": {
+      "description": "Contains the information on the inputs that feed into this node",
+      "type": "array",
+      "items": {
+        "description": "Describes an element that goes into this nodes final output value",
+        "type": "object",
+        "properties": {
+          "weight": {"type": "number", "default": 1.0, "description": "Will be of use in future releases."},
+          "address": {"type": "string"},
+          "vrc-prefix": {"type": "string"},
+          "source": { 
+            "description": "Speed or direct weight", 
+            "enum": ["Weight", "Velocity"],
+            "default": "Weight"
+          },
+          "layer": {
+            "description": "How this value stacks within the singular node.", 
+            "enum": ["Additive", "Max", "Subtractive", "Multiplicative", "Gate", "Override"]
+          },
+          "shape": {
+            "description": "Describes the shape and size of the input node. Used for internal calculations but mostly initializing nodes in game-integrations.",
+            "$ref": "#/$defs/Shape"
+          }
+        },
+        "required": ["address", "layer", "shape", "source"]
+      },
+      "minItems": 1
+    },
+    "interpolationLayer": {
+      "description": "Internally, the separate layers are calculated, then the non-zero results are averaged. `Greedy` locks onto the nearest output and overrides its output. `Default` exponentially weighs distance from the output. `Linear` Linearly scales outputs according to `size:radius`/node_distance. `Global` influences all nodes regardless of distance.",
+      "enum": ["Greedy", "Default", "Linear", "Global"]
+    },
+    "parentBone": {
+      "description": "Which bone on the humanoid skeleton this node is attached to.",
+      "type": "string",
+      "enum": [
+        "hips",
+        "leftUpperLeg",
+        "rightUpperLeg",
+        "leftLowerLeg",
+        "rightLowerLeg",
+        "leftFoot",
+        "rightFoot",
+        "spine",
+        "chest",
+        "upperChest",
+        "neck",
+        "head",
+        "leftShoulder",
+        "rightShoulder",
+        "leftUpperArm",
+        "rightUpperArm",
+        "leftLowerArm",
+        "rightLowerArm",
+        "leftHand",
+        "rightHand",
+        "leftToes",
+        "rightToes",
+        "leftEye",
+        "rightEye",
+        "jaw",
+        "leftThumbProximal",
+        "leftThumbIntermediate",
+        "leftThumbDistal",
+        "leftIndexProximal",
+        "leftIndexIntermediate",
+        "leftIndexDistal",
+        "leftMiddleProximal",
+        "leftMiddleIntermediate",
+        "leftMiddleDistal",
+        "leftRingProximal",
+        "leftRingIntermediate",
+        "leftRingDistal",
+        "leftLittleProximal",
+        "leftLittleIntermediate",
+        "leftLittleDistal",
+        "rightThumbProximal",
+        "rightThumbIntermediate",
+        "rightThumbDistal",
+        "rightIndexProximal",
+        "rightIndexIntermediate",
+        "rightIndexDistal",
+        "rightMiddleProximal",
+        "rightMiddleIntermediate",
+        "rightMiddleDistal",
+        "rightRingProximal",
+        "rightRingIntermediate",
+        "rightRingDistal",
+        "rightLittleProximal",
+        "rightLittleIntermediate",
+        "rightLittleDistal"
+      ]
+    }
+  },
+  "required": ["parentBone", "interpolationLayer", "inputs", "interactionTags", "location"]
+}

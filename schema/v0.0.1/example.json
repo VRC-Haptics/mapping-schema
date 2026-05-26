@@ -1,0 +1,46 @@
+{
+    "node": {
+        "location": [1, 1, 1],
+        "interaction_tags": ["All"],
+        "name": "test",
+        "interpolation-layer": "Gaussian",
+        "inputs": [
+            {
+                "weight": 1.0, // could be ignored for a loooong while, future plan
+                "address": "node", // the id string we find feedback from
+                "vrc-prefix": "avatar/parameters/haptic", // when coming from vrc, expect this prefix name. Allows for all parameters to drive haptics
+                "contribution": "Weight", // direct weight of this should be used to drive haptics
+                "stacks": "Additive", 
+                "shape": {
+                    "type": "Sphere",
+                    "radius": 1.5
+                }
+            },
+            {
+                "weight": 1.0,
+                "address": "node_ray",
+                "vrc-prefix": "avatar/parameters/haptic",
+                "contribution": "Velocity", // velocity should be sued to drive haptics
+                "stacks": "Additive",
+                "shape": {
+                    "type": "Ray",
+                    "len": 0.5,
+                    "offset": 0.25
+                }
+            },
+            {
+                "weight": 1.0,
+                "address": "node_cap",
+                "vrc-prefix": "avatar/parameters/haptic",
+                "contribution": "Weight",
+                "stacks": "Subtractive",
+                "shape": {
+                    "type": "Capsule",
+                    "len": 0.5,
+                    "radius": 0.25
+                }
+            }
+
+        ]
+    }
+}

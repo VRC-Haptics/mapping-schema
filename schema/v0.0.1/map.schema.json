@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "${{BASE_URL}}/schema/${{VERSION}}/map.schema.json",
+  "schema-version": "${{VERSION}}",
   "title": "haptic_game_integration",
   "description": "Defines how and where haptic inputs are coming from in a game.",
   "type": "object",
@@ -14,7 +15,7 @@
           "type": "string"
         },
         "map_name": {
-          "description": "The name of this map. usually some identifiying information",
+          "description": "The name of this map. usually some identifying information",
           "type": "string"
         },
         "map_version": {
@@ -44,24 +45,15 @@
       },
       "required": ["author_name", "map_name", "map_version"]
     },
-    "input_nodes": {
-      "description": "Nodes that represent data input FROM the game",
+    "nodes": {
+      "description": "Nodes that represent how addresses should be mapped to locations in space.",
       "type": "array",
       "items": {
-        "$ref": "${{BASE_URL}}/schema/${{VERSION}}/in_node.schema.json",
-        "uniqueItems": true,
-        "minItems": 0
-      }
-    },
-    "output_nodes": {
-      "description": "Nodes that will be associated with an output device. Inidices determine order transmitted to devices, changing the order effectively ",
-      "type": "array",
-      "items": {
-        "$ref": "${{BASE_URL}}/schema/${{VERSION}}/out_node.schema.json",
-        "uniqueItems": true,
-        "minItems": 0
-      }
+        "$ref": "${{BASE_URL}}/schema/${{VERSION}}/node.schema.json"
+      },
+      "uniqueItems": true,
+      "minItems": 1
     }
   },
-  "required": ["identification", "input_nodes", "output_nodes"]
+  "required": ["identification", "nodes"]
 }
