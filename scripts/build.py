@@ -83,14 +83,14 @@ def process_version_folder(folder: Path, url: str, is_first: bool, is_last: bool
     else:
         print("Skipped up.js for latest version")
 
-def process_deprecated_folder(folder: Path, url: str):
-    out_path = schema_dir / folder.name
-    out_path.mkdir()
+def process_deprecated(deprecated_versions: list[str]):
+    deprecated_out = schema_dir / "deprecated"
+    deprecated_out.mkdir()
 
-    process_schemas(folder, out_path, url)
-
-    deprecated_js = raw_root / "deprecated" / f"{folder.name}.js"
-    shutil.copy2(deprecated_js, out_path / "migrate.js")
+    for ver in deprecated_versions:
+        print(f"Processing Deprecated Version: {ver}")
+        src = raw_root / "deprecated" / f"{ver}.js"
+        shutil.copy2(src, deprecated_out / f"{ver}.js")
 
 def build(url: str):
     versions_file = raw_root / "versions.json"
@@ -115,11 +115,7 @@ def build(url: str):
         process_version_folder(ver_dir, url, idx == 0, idx == len(active_versions) - 1)
 
     # Process deprecated versions
-    for ver in deprecated_versions:
-        ver_dir = raw_root / ver
-        if ver_dir.is_dir():
-            print(f"Processing Deprecated Version: {ver_dir}")
-            process_deprecated_folder(ver_dir, url)
+    process_deprecated(deprecated_versions)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

@@ -1,7 +1,7 @@
 # mapping-schema
 Hosts the standards for the mapping schema used throughout this project, as well as the methods for traversing versions.
 
-Please note that the `map.schema.json` is the only garunteed file for each version. Every other file is defined on an as-required basis.
+Please note that the `map.schema.json` is the only guaranteed file for each version. Every other file is defined on an as-required basis.
 
 # Structure:
 

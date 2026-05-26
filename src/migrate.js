@@ -1,9 +1,22 @@
 // @ts-check
 
 /**
- * @typedef {{message: string, type: string, length?: number, itemType?: string}} PromptOptions
- * @typedef {{prompt: (opts: PromptOptions) => Promise<unknown>, warn: (msg: string) => void, log: (msg: string) => void}} MigrationContext
- * @typedef {{from: string, to: string, requiresUserInput: boolean, migrate: (old: unknown, ctx: MigrationContext) => Promise<unknown>}} Migration
+ * @typedef {string | number | boolean | null | Array<*> | Object<string, *>} Json
+ * @typedef {{[key: string]: Json}} JsonObject
+ * @typedef {{
+ *   log: (msg: string) => void,
+ *   warn: (msg: string) => void,
+ *   get: (val: string) => unknown,
+ *   set: (key: string, value: unknown) => void,
+ *   request: (prompt: string, default_value: Json | null, key: string) => Json
+ * }} MigrationCtx
+ * @typedef {{
+ *   from: string,
+ *   to: string,
+ *   requiresUserInput: boolean,
+ *   gather: (old: JsonObject, ctx: MigrationCtx) => Promise<void>,
+ *   migrate: (old: JsonObject, ctx: MigrationCtx) => Promise<JsonObject>
+ * }} Migration
  */
 
 const SCHEMA_BASE = "https://vrc-haptics.github.io/mapping-schema/schema";
@@ -22,22 +35,52 @@ let deprecatedVersions = [];
 
 // ── Elements ──
 
-const fileInput = /** @type {HTMLInputElement} */ (document.getElementById("file-input"));
-const uploadStatus = /** @type {HTMLDivElement} */ (document.getElementById("upload-status"));
-const stepUpload = /** @type {HTMLDivElement} */ (document.getElementById("step-upload"));
-const stepVersion = /** @type {HTMLDivElement} */ (document.getElementById("step-version"));
-const stepPrompt = /** @type {HTMLDivElement} */ (document.getElementById("step-prompt"));
-const stepResult = /** @type {HTMLDivElement} */ (document.getElementById("step-result"));
-const currentVersionEl = /** @type {HTMLParagraphElement} */ (document.getElementById("current-version"));
-const versionSelect = /** @type {HTMLSelectElement} */ (document.getElementById("version-select"));
-const migrateBtn = /** @type {HTMLButtonElement} */ (document.getElementById("migrate-btn"));
-const migrateStatus = /** @type {HTMLDivElement} */ (document.getElementById("migrate-status"));
-const promptLabel = /** @type {HTMLLabelElement} */ (document.getElementById("prompt-label"));
-const promptInput = /** @type {HTMLInputElement} */ (document.getElementById("prompt-input"));
-const promptSubmit = /** @type {HTMLButtonElement} */ (document.getElementById("prompt-submit"));
-const promptError = /** @type {HTMLDivElement} */ (document.getElementById("prompt-error"));
+const fileInput = /** @type {HTMLInputElement} */ (
+  document.getElementById("file-input")
+);
+const uploadStatus = /** @type {HTMLDivElement} */ (
+  document.getElementById("upload-status")
+);
+const stepUpload = /** @type {HTMLDivElement} */ (
+  document.getElementById("step-upload")
+);
+const stepVersion = /** @type {HTMLDivElement} */ (
+  document.getElementById("step-version")
+);
+const stepPrompt = /** @type {HTMLDivElement} */ (
+  document.getElementById("step-prompt")
+);
+const stepResult = /** @type {HTMLDivElement} */ (
+  document.getElementById("step-result")
+);
+const currentVersionEl = /** @type {HTMLParagraphElement} */ (
+  document.getElementById("current-version")
+);
+const versionSelect = /** @type {HTMLSelectElement} */ (
+  document.getElementById("version-select")
+);
+const migrateBtn = /** @type {HTMLButtonElement} */ (
+  document.getElementById("migrate-btn")
+);
+const migrateStatus = /** @type {HTMLDivElement} */ (
+  document.getElementById("migrate-status")
+);
+const promptLabel = /** @type {HTMLLabelElement} */ (
+  document.getElementById("prompt-label")
+);
+const promptInput = /** @type {HTMLInputElement} */ (
+  document.getElementById("prompt-input")
+);
+const promptSubmit = /** @type {HTMLButtonElement} */ (
+  document.getElementById("prompt-submit")
+);
+const promptError = /** @type {HTMLDivElement} */ (
+  document.getElementById("prompt-error")
+);
 const logEl = /** @type {HTMLDivElement} */ (document.getElementById("log"));
-const downloadBtn = /** @type {HTMLButtonElement} */ (document.getElementById("download-btn"));
+const downloadBtn = /** @type {HTMLButtonElement} */ (
+  document.getElementById("download-btn")
+);
 
 /**
  * Detects the schema version from a parsed document.
@@ -71,7 +114,7 @@ async function loadVersions() {
  */
 function loadScript(src) {
   return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
+    const script = document.createElement("script");
     script.src = src;
     script.onload = resolve;
     script.onerror = reject;
@@ -137,6 +180,17 @@ migrateBtn.addEventListener("click", async () => {
   logEl.innerHTML = "";
 
   const target = versionSelect.value;
+  console.log(`Starting migration to: ${target}`);
+
+  // move to supported version
+  if (!currentVersions.includes(fileVersion)) {
+    console.log("Moving to supported version.");
+
+    
+  } else {
+    uploadStatus.innerHTML = `<div class="info">File is format: ${fileVersion}</div>`;
+  }
+
   // later
   fileVersion = target;
 });
@@ -144,7 +198,9 @@ migrateBtn.addEventListener("click", async () => {
 // ── Download ──
 
 downloadBtn.addEventListener("click", () => {
-  const blob = new Blob([JSON.stringify(currentDoc, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify(currentDoc, null, 2)], {
+    type: "application/json",
+  });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
