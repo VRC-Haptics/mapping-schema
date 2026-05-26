@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map Migration Tool</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Map Migration Tool</h1>
+
+  <div id="step-upload" class="step active">
+    <label for="file-input">Upload your map JSON</label>
+    <input type="file" id="file-input" accept=".json">
+    <div id="upload-status"></div>
+  </div>
+
+  <div id="step-version" class="step">
+    <label for="version-select">Migrate to</label>
+    <p id="current-version" style="margin-bottom:0.25rem; font-size:0.9rem;"></p>
+    <select id="version-select"></select>
+    <button id="migrate-btn" style="margin-left:0.5rem;" disabled>Migrate</button>
+    <div id="migrate-status"></div>
+  </div>
+
+  <div id="step-prompt" class="step">
+    <label id="prompt-label"></label>
+    <input type="text" id="prompt-input">
+    <button id="prompt-submit" style="margin-top:0.5rem;">Submit</button>
+    <div class="error" id="prompt-error" style="display:none;"></div>
+  </div>
+
+  <div id="step-result" class="step">
+    <label>Migration complete</label>
+    <div id="log"></div>
+    <button id="download-btn" style="margin-top:0.75rem;">Download migrated file</button>
+  </div>
+
+  <script src="migrate.js"></script>
+</body>
+</html>

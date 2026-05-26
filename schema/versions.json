@@ -1,5 +1,8 @@
 {
-    "schema-versions": [
+    "schemaVersions": [
         "v0.0.1"
+    ],
+    "deprecatedVersions": [
+        "v0.0.0"
     ]
 }

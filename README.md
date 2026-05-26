@@ -20,7 +20,11 @@ Versions are assumed to fall in the order that they appear in the versions.json 
 Migration files are a json format that describe what is needed to migrate from one version to another. They use the JSON Pointer specification for referencing value fields within a known json structure.
 
 ### Upgrade format.
-Here we have an already known format that we need to migrate into a new version.
+Version Traversal is performed via the up.js and the down.js in each version. 
+
+Order of traversal is determined by the `schema-versions` list order in versions.json. up.js for a particular version translates to the nearest version above it on the active list and inverse for down.js.
+
+For `deprecated-versions`, these are semvar's that have been retired for one reason or another and no longer are recommended or widely supported. Their migration scripts still exist on the hosted server, but the schema's have been removed to enforce this. 
 
 ```jsonc
 {
@@ -32,7 +36,7 @@ Here we have an already known format that we need to migrate into a new version.
         {
             "explanation": "We are migrating from one coordinate system to another, please enter new coordinates."
             // which field length this input should gather, if any. (equivalent to a for_each)
-            "itterate_field": null | "/input_nodes" | "/output_nodes",
+            "iterate_field": null | "/input_nodes" | "/output_nodes",
             // list of structs to map variables in the user prompt to the documents fields.
             "prompt_vars": {"config_name": "/identification/map_name", "input_node_position": "/input_nodes/$index/location"},
             // template that prompts.

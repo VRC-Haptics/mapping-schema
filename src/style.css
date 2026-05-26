@@ -1,0 +1,20 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; color: #e0e0e0; background: #1a1a1a; }
+h1 { margin-bottom: 1rem; font-size: 1.4rem; }
+.step { display: none; margin-bottom: 1.5rem; padding: 1rem; border: 1px solid #333; border-radius: 6px; background: #222; }
+.step.active { display: block; }
+label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+select, button, input[type="file"], input[type="text"] {
+  font: inherit; padding: 0.4rem 0.8rem; border-radius: 4px; border: 1px solid #444; background: #2a2a2a; color: #e0e0e0;
+}
+input[type="text"] { width: 100%; }
+button { cursor: pointer; background: #335; border-color: #558; }
+button:hover { background: #447; }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+.info { padding: 0.5rem; background: #1e2a1e; border: 1px solid #2a4a2a; border-radius: 4px; margin-top: 0.5rem; font-size: 0.9rem; }
+.error { padding: 0.5rem; background: #2a1e1e; border: 1px solid #4a2a2a; border-radius: 4px; margin-top: 0.5rem; font-size: 0.9rem; }
+.success { padding: 0.5rem; background: #4b7007; border: 1px solid #4a2a2a; border-radius: 4px; margin-top: 0.5rem; font-size: 0.9rem; }
+#log { white-space: pre-wrap; font-family: monospace; font-size: 0.85rem; margin-top: 0.5rem; max-height: 300px; overflow-y: auto; }
+#log .warn { color: #d4a017; }
+#log .log { color: #8a8; }
+option.deprecated { color: #d4a017; }
