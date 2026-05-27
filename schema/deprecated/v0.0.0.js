@@ -18,6 +18,8 @@ export default {
       const bone =
         node.target_bone.charAt(0).toLowerCase() + node.target_bone.slice(1);
 
+      const ray = node.ray;
+
       return {
         location: [node.node_data.x, node.node_data.y, node.node_data.z],
         groups: node.node_data.groups,
@@ -26,8 +28,8 @@ export default {
         externalSource: node.is_external_address,
         parentBone: bone,
         sphereRadius: node.radius,
-        rayLen: node.ray.size,
-        rayOffset: node.ray.position_offset.z,
+        rayLen: ray ? ray.size : 0,
+        rayOffset: ray ? ray.position_offset.z : 0,
       };
     });
 
