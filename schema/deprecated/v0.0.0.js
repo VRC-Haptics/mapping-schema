@@ -21,8 +21,6 @@ export default {
       const ray = node.ray;
 
       return {
-        $schema: `https://vrc-haptics.github.io/mapping-schema/schema/v0.0.1/map.schema.json`,
-        schemaVersion: this.to,
         location: [node.node_data.x, node.node_data.y, node.node_data.z],
         groups: node.node_data.groups,
         shortAddress,
@@ -47,6 +45,8 @@ export default {
     const RAY_EPSILON = 0.0001;
 
     return {
+      $schema: `https://vrc-haptics.github.io/mapping-schema/schema/v0.0.1/map.schema.json`,
+      schemaVersion: this.to,
       identification: {
         author_name: meta.map_author,
         map_name: meta.map_name,
