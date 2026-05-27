@@ -27,6 +27,12 @@ jobs:
         run: |
           python "scripts/build.py" --url "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
 
+      - name: Copy site files
+        run: |
+          cp src/index.html build/
+          cp src/style.css build/
+          cp src/migrate.js build/
+    
       - name: Create archive
         run: |
           cd build

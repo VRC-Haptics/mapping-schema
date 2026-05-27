@@ -240,7 +240,14 @@ migrateBtn.addEventListener("click", async () => {
   } 
 
   // return early if needed
-  if (selectedVersion.vers === fileVersion) return;
+  if (selectedVersion.vers === fileVersion) {
+    console.log("Finished");
+    stepResult.classList.add("active");
+    migrateBtn.disabled = false;
+    migrateStatus.innerHTML = `<div class="info">Conversion Complete</div>`;;
+    logEl.innerHTML = "";
+    return;
+  }
 
   // traverse supported versions
   const targetIdx = selectedVersion.idx;
@@ -257,6 +264,12 @@ migrateBtn.addEventListener("click", async () => {
     currentDoc = await runMigration(migration, currentDoc, ctx, return_immediately);
     fileVersion = currentVersions[i + step];
   }
+
+  console.log("Finished");
+  stepResult.classList.add("active");
+  migrateBtn.disabled = false;
+  migrateStatus.innerHTML = `<div class="info">Conversion Complete</div>`;
+  logEl.innerHTML = "";
 });
 
 // ── Download ──
