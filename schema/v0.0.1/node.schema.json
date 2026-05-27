@@ -1,6 +1,5 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "schema-version": "${{VERSION}}",
   "$id": "${{BASE_URL}}/schema/${{VERSION}}/node.schema.json",
   "title": "input_node_definition",
   "description": "Defines all the information an input haptic node can carry",
