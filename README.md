@@ -30,6 +30,9 @@ Order of traversal is determined by the `schema-versions` list order in versions
 
 For `deprecated-versions`, these are semvar's that have been retired for one reason or another and no longer are recommended or widely supported. Their migration scripts exist under `schema/deprecated/`, but the schemas have been removed to enforce this.
 
+**SCRIPTS SHOULD PREPARE DEFAULTS FOR ANY USER SUBMITTED VALUES TO BE NON-ANSWERED.**
+THIS IS NULL IF A DEFAULT WASN'T GIVEN.
+
 Migration scripts are JavaScript modules that implement the `Migration` interface:
 
 ```javascript
