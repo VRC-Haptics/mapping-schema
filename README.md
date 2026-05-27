@@ -3,62 +3,53 @@ Hosts the standards for the mapping schema used throughout this project, as well
 
 Please note that the `map.schema.json` is the only guaranteed file for each version. Every other file is defined on an as-required basis.
 
+https://vrc-haptics.github.io/mapping-schema/schema/migrate.d.ts 
+Hosts the interfaces for the migration scripts.
+
 # Structure:
 
 - `schema/` contains the actual json schemas.
     - `schema/versions.json` lists all publicly released Semver's of the schema under the `schema-versions` tag.
     - `schema/{version-semvar}/` contains all materials for schemas and sub-schemas.
-        - `migrate-up.json` Records the patching method https://jsonpatch.com/ for transforming to the next higher version. (e.g. +1 index in the `versions.json` list)
-        - `migrate-down.json` Patches Downwards in versioning.
+        - `up.js` Migration script for transforming to the next higher version. (e.g. +1 index in the `versions.json` list)
+        - `down.js` Migration script for transforming to the next lower version.
+    - `schema/deprecated/` contains migration scripts for retired versions.
+        - `{version-semvar}.js` Migrates from the deprecated version to its nearest supported version.
+- `src/` contains the web-based migration tool (HTML, CSS, JS).
 - `scripts/` contains python scripts used in the workflows to create the `build/` directory.
-- `build/` contains the output directory that is published to gh-pages- 
+- `build/` contains the output directory that is published to gh-pages.
 
 
 ## Version Migration
 Versions are assumed to fall in the order that they appear in the versions.json file. So index 1 in the `schema-versions` key migrates up to version index 2 and down to index 0.
 
-Migration files are a json format that describe what is needed to migrate from one version to another. They use the JSON Pointer specification for referencing value fields within a known json structure.
+### Migration Scripts
+Version Traversal is performed via the `up.js` and the `down.js` in each version's directory. 
 
-### Upgrade format.
-Version Traversal is performed via the up.js and the down.js in each version. 
+Order of traversal is determined by the `schema-versions` list order in versions.json. `up.js` for a particular version translates to the nearest version above it on the active list and inverse for `down.js`.
 
-Order of traversal is determined by the `schema-versions` list order in versions.json. up.js for a particular version translates to the nearest version above it on the active list and inverse for down.js.
+For `deprecated-versions`, these are semvar's that have been retired for one reason or another and no longer are recommended or widely supported. Their migration scripts exist under `schema/deprecated/`, but the schemas have been removed to enforce this.
 
-For `deprecated-versions`, these are semvar's that have been retired for one reason or another and no longer are recommended or widely supported. Their migration scripts still exist on the hosted server, but the schema's have been removed to enforce this. 
+Migration scripts are JavaScript modules that implement the `Migration` interface:
 
-```jsonc
-{
-    // whether the requested update is possible in a trivial, automatic way
-    // Purely a convenience field.
-    "update_type": "data_reduction" | "data_addition" | "reformat", 
-    // Produces a list of var's that can be referenced in patches to fill in missing information.
-    "user_input": [
-        {
-            "explanation": "We are migrating from one coordinate system to another, please enter new coordinates."
-            // which field length this input should gather, if any. (equivalent to a for_each)
-            "iterate_field": null | "/input_nodes" | "/output_nodes",
-            // list of structs to map variables in the user prompt to the documents fields.
-            "prompt_vars": {"config_name": "/identification/map_name", "input_node_position": "/input_nodes/$index/location"},
-            // template that prompts.
-            "prompt_template": "$config_name @ $index has position: $input_node_position"
-            "var": number |  integer | null | array | object | boolean | string,
-            "var_name": "name-used-in-patches_$index", // must include index reference if itterable results.
-        }
-    ],
-    "patches": [
-        // regular patch commands
-        { "op": "add", "path": "/biscuits/1", "value": { "name": "Ginger Nut" } },
-        { "op": "remove", "path": "/biscuits" },
-        { "op": "replace", "path": "/biscuits/0/name", "value": "Chocolate Digestive" },
-        { "op": "copy", "from": "/biscuits/0", "path": "/best_biscuit" }
-        { "op": "move", "from": "/biscuits", "path": "/cookies" }
-        { "op": "test", "path": "/best_biscuit/name", "value": "Choco Leibniz" }
+```javascript
+export default {
+    from: 'v0.0.0',       // source version
+    to: 'v0.0.1',         // target version
+    requiresUserInput: false, // whether ctx.request() prompts are used
 
-        // With the iterate key, during runtime this should be preprocessedfor each value in the itterated address.
-        // This will expand into len(input_nodes) add patches, where .
-        { "iterate": "/input_nodes", "op": "add", "path": "/input_nodes/$index/location", "value": "name-used-in-patches_$index"}
-    ]
+    // Extracts and stashes values from the old document into ctx for later use.
+    async gather(old, ctx) { },
+
+    // Creates a NEW object in the target format using values from ctx.
+    // Should not mutate the old document.
+    async migrate(old, ctx) { }
 }
 ```
+
+The `MigrationCtx` provides:
+- `ctx.log(msg)` / `ctx.warn(msg)` — logging
+- `ctx.get(key)` / `ctx.set(key, value)` — key-value store shared between `gather` and `migrate`
+- `ctx.request(prompt, default_value, key)` — requests user input when `requiresUserInput` is true
 
 **WARNING**: Using `${{BASE_URL}}` will be preprocessed in the same way as the schemas. Purely for migration purposes later.
