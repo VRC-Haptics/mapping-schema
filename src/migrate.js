@@ -22,10 +22,12 @@
 const SCHEMA_BASE = "https://vrc-haptics.github.io/mapping-schema/schema";
 const VERSIONS_URL = `${SCHEMA_BASE}/versions.json`;
 
-/** @type {unknown} */
-let currentDoc = null;
+/** @type {JsonObject} */
+let currentDoc = {};
 /** @type {string} */
 let fileVersion = "";
+/** @type {{vers: string, idx: number} | null} */
+let selectedVersion = null;
 /** @type {string} */
 let originalFilename = "";
 /** @type {string[]} */
@@ -85,7 +87,7 @@ const downloadBtn = /** @type {HTMLButtonElement} */ (
 /**
  * Detects the schema version from a parsed document.
  * Falls back to v0.0.0 if missing or invalid.
- * @param {Record<string, unknown>} doc
+ * @param {JsonObject} doc
  * @returns {string}
  */
 function detectVersion(doc) {
@@ -109,19 +111,58 @@ async function loadVersions() {
   deprecatedVersions = /** @type {string[]} */ (data.deprecatedVersions || []);
 }
 
+
 /**
- * @param {string} src
+ * @param {string} url
+ * @returns {Promise<Migration>}
  */
-function loadScript(src) {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = src;
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
+async function loadMigration(url) {
+  const module = await import(url);
+  return module.default ?? module;
 }
 
+/**
+ * Loads a migration module from a URL, runs gather, waits for user input if needed, then migrates.
+ *
+ * @param {Migration} migration - URL to the migration .js file
+ * @param {JsonObject} doc - The document to migrate
+ * @param {MigrationCtx} ctx - Migration context
+ * @param {() => Promise<void>} waitForUser - Called after gather if requiresUserInput is true.
+ *   Should resolve once the user has filled out all requested values.
+ * @returns {Promise<JsonObject>} The migrated document
+ */
+async function runMigration(migration, doc, ctx, waitForUser) {
+  await migration.gather(doc, ctx);
+
+  if (migration.requiresUserInput) {
+    await waitForUser();
+  }
+
+  return await migration.migrate(doc, ctx);
+}
+
+/**
+ * @returns {{ ctx: MigrationCtx, store: Map<string, unknown>, prompts: Array<{prompt: string, default_value: Json | null, key: string}> }}
+ */
+function createMigrationCtx() {
+  const store = new Map();
+  /** @type {Array<{prompt: string, default_value: Json | null, key: string}>} */
+  const prompts = [];
+
+  /** @type {MigrationCtx} */
+  const ctx = {
+    log: (msg) => console.log(`[migration] ${msg}`),
+    warn: (msg) => console.warn(`[migration] ${msg}`),
+    get: (key) => store.get(key),
+    set: (key, value) => store.set(key, value),
+    request: (prompt, default_value, key) => {
+      prompts.push({ prompt, default_value, key });
+      return default_value;
+    },
+  };
+
+  return { ctx, store, prompts };
+}
 // File Upload
 
 fileInput.addEventListener("change", async () => {
@@ -138,8 +179,7 @@ fileInput.addEventListener("change", async () => {
     return;
   }
 
-  var doc = /** @type {Record<string, unknown>} */ (currentDoc);
-  fileVersion = detectVersion(doc);
+  fileVersion = detectVersion(currentDoc);
 
   try {
     await loadVersions();
@@ -174,25 +214,49 @@ fileInput.addEventListener("change", async () => {
 
 // ── Migration ──
 
+async function return_immediately() {};
+
 migrateBtn.addEventListener("click", async () => {
   migrateBtn.disabled = true;
   migrateStatus.innerHTML = "";
   logEl.innerHTML = "";
 
-  const target = versionSelect.value;
-  console.log(`Starting migration to: ${target}`);
+  selectedVersion = {vers: versionSelect.value, idx: currentVersions.findIndex((s) => s===versionSelect.value)};
+  console.log(`Starting migration to: ${selectedVersion}`);
 
   // move to supported version
   if (!currentVersions.includes(fileVersion)) {
     console.log("Moving to supported version.");
 
-    
-  } else {
-    uploadStatus.innerHTML = `<div class="info">File is format: ${fileVersion}</div>`;
-  }
+    const {ctx, store, prompts} = createMigrationCtx();
+    const url = `${SCHEMA_BASE}/deprecated/${fileVersion}.js`;
+    const migration = await loadMigration(url);
+    const dest = migration.to;
+    console.log(`This will migrate from ${migration.from} to ${migration.to}`);
+    currentDoc = await runMigration(
+      migration, currentDoc, ctx, return_immediately
+    )
+    fileVersion = dest;
+  } 
 
-  // later
-  fileVersion = target;
+  // return early if needed
+  if (selectedVersion.vers === fileVersion) return;
+
+  // traverse supported versions
+  const targetIdx = selectedVersion.idx;
+  const currentIdx = currentVersions.indexOf(fileVersion);
+  const step = targetIdx > currentIdx ? 1 : -1;
+
+  for (let i = currentIdx; i !== targetIdx; i += step) {
+    const ver = currentVersions[i];
+    const direction = step > 0 ? "up" : "down";
+    const url = `${SCHEMA_BASE}/${ver}/${direction}.js`;
+    const migration = await loadMigration(url);
+
+    const { ctx, store, prompts } = createMigrationCtx();
+    currentDoc = await runMigration(migration, currentDoc, ctx, return_immediately);
+    fileVersion = currentVersions[i + step];
+  }
 });
 
 // ── Download ──

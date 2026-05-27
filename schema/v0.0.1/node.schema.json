@@ -11,7 +11,7 @@
         {
           "type": "object",
           "properties": {
-            "type": { "const": "Sphere" },
+            "type": { "const": "sphere" },
             "radius": { "type": "number" }
           },
           "required": ["type", "radius"],
@@ -21,7 +21,7 @@
           "type": "object",
           "description": "A capsule type collider has it's location at the center of the shape.",
           "properties": {
-            "type": { "const": "Capsule" },
+            "type": { "const": "capsule" },
             "radius": { "type": "number" },
             "length": { "type": "number" },
             "rotation": {
@@ -38,7 +38,7 @@
         {
           "type": "object",
           "properties": {
-            "type": { "const": "Ray" },
+            "type": { "const": "ray" },
             "len": { "type": "number" },
             "offset": {"type": "number"}
           },
@@ -49,7 +49,7 @@
           "type": "object",
           "description": "It is required to use the Global `interpolation_layer` as this will result in a 0 output value.",
           "properties": {
-            "type": { "const": "Point" }
+            "type": { "const": "point" }
           },
           "required": ["type"],
           "additionalProperties": false
@@ -59,8 +59,9 @@
   },
   "properties": {
     "name": {
-      "description": "A short recognizable name for this node. Very optional.",
-      "type": "string"
+      "description": "A short recognizable name for this node. (<10chars) Very optional.",
+      "type": "string",
+      "maxLength": 10
     },
     "location": {
       "description": "Location of this node in the Manager's \"standard\" space",
@@ -116,15 +117,16 @@
         "properties": {
           "weight": {"type": "number", "default": 1.0, "description": "Will be of use in future releases."},
           "address": {"type": "string"},
-          "vrc-prefix": {"type": "string"},
+          "vrcPrefix": {"type": "string"},
+          "externalSource": {"type": "boolean"},
           "source": { 
             "description": "Speed or direct weight", 
-            "enum": ["Weight", "Velocity"],
-            "default": "Weight"
+            "enum": ["weight", "velocity"],
+            "default": "weight"
           },
           "layer": {
             "description": "How this value stacks within the singular node.", 
-            "enum": ["Additive", "Max", "Subtractive", "Multiplicative", "Gate", "Override"]
+            "enum": ["additive", "max", "subtractive", "multiplicative", "gate", "override"]
           },
           "shape": {
             "description": "Describes the shape and size of the input node. Used for internal calculations but mostly initializing nodes in game-integrations.",
@@ -135,9 +137,13 @@
       },
       "minItems": 1
     },
+    "radius": {
+      "description": "The radius this node has within the server, independent of the source nodes. Used in interpolationLayer",
+      "type": "number"
+    },
     "interpolationLayer": {
       "description": "Internally, the separate layers are calculated, then the non-zero results are averaged. `Greedy` locks onto the nearest output and overrides its output. `Default` exponentially weighs distance from the output. `Linear` Linearly scales outputs according to `size:radius`/node_distance. `Global` influences all nodes regardless of distance.",
-      "enum": ["Greedy", "Default", "Linear", "Global"]
+      "enum": ["greedy", "default", "linear", "global"]
     },
     "parentBone": {
       "description": "Which bone on the humanoid skeleton this node is attached to.",
@@ -201,5 +207,5 @@
       ]
     }
   },
-  "required": ["parentBone", "interpolationLayer", "inputs", "interactionTags", "location"]
+  "required": ["parentBone", "interpolationLayer", "inputs", "interactionTags", "location", "radius"]
 }
