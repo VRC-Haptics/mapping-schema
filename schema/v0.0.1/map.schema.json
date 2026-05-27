@@ -1,14 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "${{BASE_URL}}/schema/${{VERSION}}/map.schema.json",
-  "schema-version": "${{VERSION}}",
   "title": "haptic_game_integration",
   "description": "Defines how and where haptic inputs are coming from in a game.",
   "type": "object",
   "properties": {
     "schemaVersion": {
       "type": "string",
-      "description": "What version this conforms to."
+      "description": "What version this conforms to.",
+      "const": "v0.0.1"
     },
     "identification": {
       "description": "A group of defining features that are used to load configurations when an avatar is detected. All maps with the same name are expected to be compatible, with the latest as a default.",
