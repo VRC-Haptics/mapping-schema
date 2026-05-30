@@ -48,9 +48,9 @@ export default {
       $schema: `https://vrc-haptics.github.io/mapping-schema/schema/v0.0.1/map.schema.json`,
       schemaVersion: this.to,
       identification: {
-        author_name: meta.map_author,
-        map_name: meta.map_name,
-        map_version: meta.map_version,
+        authorName: meta.map_author,
+        mapName: meta.map_name,
+        mapVersion: meta.map_version,
       },
       nodes: nodes.map((n) => {
         const inputs = [
