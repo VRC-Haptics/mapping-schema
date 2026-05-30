@@ -14,23 +14,23 @@
       "description": "A group of defining features that are used to load configurations when an avatar is detected. All maps with the same name are expected to be compatible, with the latest as a default.",
       "type": "object",
       "properties": {
-        "author_name": {
+        "authorName": {
           "description": "The name of the author of the map, all map names must be unique for a author. Please use a screen name",
           "type": "string"
         },
-        "map_name": {
+        "mapName": {
           "description": "The name of this map. usually some identifying information",
           "type": "string"
         },
-        "map_version": {
+        "mapVersion": {
           "description": "Increments with each version change.",
           "type": "integer"
         },
-        "author_id": {
+        "authorId": {
           "description": "Author UUID assigned by the official distribution system. Work in Progress, currently does nothing",
           "type": "string"
         },
-        "custom_repository": {
+        "customRepository": {
           "description": "Custom github repository that will be used to look for newer versions or patches of this map. Only Github pages with default domains are accepted for some semblance of security",
           "type": "object",
           "properties": {
@@ -40,7 +40,7 @@
             "repository": {
               "type": "string"
             },
-            "index_file": {
+            "indexFile": {
               "description": "URL path from the gh-pages base to your index.json file. URL path must end in index.json",
               "type": "string"
             }
