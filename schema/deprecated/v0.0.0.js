@@ -77,7 +77,7 @@ export default {
         if (n.rayLen > RAY_EPSILON) {
           inputs.push({
             address: n.shortAddress + "_Ratio",
-            vrcPrefix: vrcPrefix,
+            vrcPrefix: n.prefix,
             externalSource: n.externalSource,
             source: "weight",
             layer: "additive",
@@ -91,7 +91,7 @@ export default {
         } else {
           inputs.push({
             address: n.shortAddress,
-            vrcPrefix: vrcPrefix,
+            vrcPrefix: n.prefix,
             externalSource: n.externalSource,
             source: "velocity",
             layer: "additive",
