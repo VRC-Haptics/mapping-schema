@@ -47,7 +47,7 @@
           }
         }
       },
-      "required": ["author_name", "map_name", "map_version"]
+      "required": ["authorName", "mapName", "mapVersion"]
     },
     "nodes": {
       "description": "Nodes that represent how addresses should be mapped to locations in space.",
