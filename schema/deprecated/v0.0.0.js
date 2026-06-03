@@ -11,9 +11,15 @@ export default {
 
     const processedNodes = old.nodes.map((node) => {
       const fullAddress = node.address;
-      const shortAddress = fullAddress.startsWith(vrcPrefix)
-        ? fullAddress.slice(vrcPrefix.length)
-        : fullAddress;
+      var shortAddress = "";
+      var prefix = "";
+      if (fullAddress.startsWith(vrcPrefix)) {
+        shortAddress = fullAddress.slice(vrcPrefix.length);
+        prefix = vrcPrefix;
+      } else {
+        shortAddress = fullAddress;
+        prefix = "";
+      }
 
       const bone =
         node.target_bone.charAt(0).toLowerCase() + node.target_bone.slice(1);
@@ -24,7 +30,7 @@ export default {
         location: [node.node_data.x, node.node_data.y, node.node_data.z],
         groups: node.node_data.groups,
         shortAddress,
-        fullAddress,
+        prefix,
         externalSource: node.is_external_address,
         parentBone: bone,
         sphereRadius: node.radius,
@@ -56,7 +62,7 @@ export default {
         const inputs = [
           {
             address: n.shortAddress,
-            vrcPrefix: vrcPrefix,
+            vrcPrefix: n.prefix,
             externalSource: n.externalSource,
             source: "weight",
             layer: "additive",
