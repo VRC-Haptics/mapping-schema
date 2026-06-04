@@ -79,7 +79,8 @@
           "description": "The Z position, Unity Coordinate system."
         }
       ],
-      "items": false
+      "minItems": 3,
+      "maxItems": 3
     },
     "interactionTags": {
       "description": "What tags this node should interact with. Without tags, an input node WILL NOT output feedback",
