@@ -117,7 +117,8 @@
         "properties": {
           "weight": {"type": "number", "default": 1.0, "description": "Will be of use in future releases."},
           "address": {"type": "string"},
-          "vrcPrefix": {"type": "string"},
+          "vrcPrefix": {"type": "string",
+            "description": "Address + vrcPrefix must be the fully qualified OSC address. In almost all cases it should be: `avatar/parameters/`. The only case where it wouldn't be is when addressing an inherent parameter like velocity."},
           "externalSource": {"type": "boolean"},
           "source": { 
             "description": "Speed or direct weight", 
