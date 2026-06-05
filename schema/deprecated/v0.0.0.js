@@ -6,7 +6,7 @@ export default {
   async gather(old, ctx) {
     ctx.log("Starting v0.0.0 -> v0.0.1");
 
-    const vrcPrefix = "/avatar/parameters/Haptics/Nodes/";
+    const vrcPrefix = "/avatar/parameters/";
     ctx.set("vrcPrefix", vrcPrefix);
 
     const processedNodes = old.nodes.map((node) => {
