@@ -144,7 +144,7 @@
     },
     "interpolationLayer": {
       "description": "Internally, the separate layers are calculated, then the non-zero results are averaged. `Greedy` locks onto the nearest output and overrides its output. `Default` exponentially weighs distance from the output. `Linear` Linearly scales outputs according to `size:radius`/node_distance. `Global` influences all nodes regardless of distance.",
-      "enum": ["greedy", "default", "linear", "global"]
+      "enum": ["greedy", "default", "linear", "global", "area"]
     },
     "parentBone": {
       "description": "Which bone on the humanoid skeleton this node is attached to.",
